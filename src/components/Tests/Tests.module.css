@@ -1,0 +1,490 @@
+/* ── Test Card ── */
+.testCard { 
+  width: 100%;
+  min-height: 80vh;
+  margin: 0 auto; 
+  display: flex; 
+  flex-direction: column;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 32px !important;
+}
+.testHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.testTitle { font-size: 24px; font-weight: 700; color: #111827; margin: 0; }
+.counter {
+  font-size: 13px;
+  font-weight: 600;
+  color: #185FA5;
+  background: #185fa512;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* ── Ready ── */
+.readyBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 16px;
+}
+.readyBox h3 { font-size: 32px; font-weight: 700; color: #1E3932; margin-bottom: 16px; letter-spacing: -0.02em; }
+.readyBox p { font-size: 22px; color: #374151; line-height: 1.65; margin-bottom: 32px; max-width: 760px; margin-left: auto; margin-right: auto; }
+
+/* ── Timer Bar ── */
+.timerBar {
+  width: 100%;
+  height: 12px;
+  background: #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.timerFill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 1s linear, background-color 0.3s;
+}
+.timerText {
+  text-align: center;
+  font-size: clamp(22px, 2.2vw, 34px);
+  font-weight: 800;
+  margin-bottom: 28px;
+}
+.autoStartMsg {
+  font-size: 15px;
+  color: #374151;
+  background: #f2f0eb;
+  border: 1px solid #d6dbde;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 50px;
+  border-radius: 50px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.readyActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 0;
+}
+.timerContainer {
+  max-width: 760px;
+  margin: 0 auto 12px;
+}
+
+/* ── Shape Grids ── */
+.shapeGrid6 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(120px, 160px));
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 100px;
+}
+.shapeGrid18 {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(124px, 1fr));
+  gap: 18px;
+  margin: 0 auto 24px;
+  width: 100%;
+  max-width: 1020px;
+  justify-content: center;
+  justify-items: center;
+}
+
+.shapeGrid18Result {
+  grid-template-columns: repeat(6, minmax(108px, 1fr));
+  max-width: 920px;
+  gap: 14px;
+}
+.triangleSmall {
+  width: min(100%, 156px) !important;
+  height: min(100%, 156px) !important;
+}
+.triangleSmall svg {
+  width: 104px !important;
+  height: 104px !important;
+}
+
+/* ── Submission ── */
+.submitRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+.instruction {
+  font-size: 30px;
+  color: #374151;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* ── Legend ── */
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: #374151;
+  background: white;
+  padding: 8px 16px;
+  border-radius: 30px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.legendItem { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.dotCorrect { width: 12px; height: 12px; border-radius: 50%; background: #d97706; }
+.dotWrong { width: 12px; height: 12px; border-radius: 50%; background: #991b1b; }
+.dotMissed { width: 12px; height: 12px; border-radius: 50%; border: 2px dashed #BA7517; }
+
+/* ── Result Items ── */
+.resultItem {
+  width: min(100%, 140px) !important;
+  aspect-ratio: 1 / 1;
+  height: auto !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 4px solid #f3f4f6;
+  background: white;
+  padding: 0 !important;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.resultItem svg {
+  width: 110px !important;
+  height: 110px !important;
+  display: block;
+}
+
+/* Reset Triangle component internal wrap for results */
+.resultTriangle {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.resultCorrect {
+  border-color: #d97706 !important;
+  background-color: #fde68a !important;
+  box-shadow: 0 0 15px rgba(217, 119, 6, 0.2);
+}
+
+.resultWrong {
+  border-color: #991b1b !important;
+  background-color: #fecaca !important;
+  box-shadow: 0 0 15px rgba(153, 27, 27, 0.2);
+}
+
+.resultMissed {
+  border-color: #BA7517 !important;
+  border-style: dashed !important;
+  background-color: #FFFBEB !important;
+}
+
+/* ── Result Banner ── */
+.resultBanner {
+  text-align: center;
+  border: 3px solid;
+  border-radius: 20px;
+  padding: 24px 40px;
+  margin: 0 auto 32px;
+  max-width: 600px;
+  width: 100%;
+  background: #ffffff;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.resultScore { 
+  font-size: 80px; 
+  font-weight: 900; 
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: 4px;
+}
+.resultLabel { 
+  font-size: 20px; 
+  font-weight: 800; 
+  text-transform: uppercase; 
+  letter-spacing: 1.5px;
+}
+.resultPct { font-size: 15px; font-weight: 600; color: #6b7280; }
+
+/* ── Stimulus Box ── */
+.stimulusBox {
+  width: min(760px, 90vw, calc(100vh - 240px));
+  max-height: calc(100vh - 240px);
+  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+  border: 4px solid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 0 auto;
+}
+
+.visualStimulusSvg {
+  width: min(72%, 380px);
+  height: auto;
+  display: block;
+}
+
+.waitText {
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 600;
+  color: #92400e;
+}
+.goText {
+  font-size: clamp(38px, 7vw, 64px);
+  font-weight: 800;
+  color: #065f46;
+}
+.earlyText {
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 700;
+  color: #A32D2D;
+}
+
+/* ── Animations ── */
+.pulseAnim {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+}
+.popAnim {
+  animation: pop 0.15s ease-out;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@keyframes pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ── Round Result ── */
+.roundResult {
+  text-align: center;
+  padding: 32px 16px;
+}
+.rtValue {
+  font-size: 120px;
+  font-weight: 900;
+  color: #1E3932;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.rtLabel {
+  font-size: 18px;
+  font-weight: 600;
+  color: #00754A;
+  margin-bottom: 24px;
+}
+
+.finishedResult {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 1280px) {
+  .testCard {
+    padding: 24px !important;
+  }
+
+  .shapeGrid18 {
+    grid-template-columns: repeat(5, minmax(118px, 1fr));
+    max-width: 860px;
+    gap: 14px;
+  }
+
+  .shapeGrid18Result {
+    grid-template-columns: repeat(5, minmax(104px, 1fr));
+    max-width: 760px;
+    gap: 12px;
+  }
+
+  .instruction {
+    font-size: 26px;
+  }
+
+  .stimulusBox {
+    width: min(680px, 90vw, calc(100vh - 220px));
+    max-height: calc(100vh - 220px);
+  }
+}
+
+@media (max-width: 1024px) {
+  .shapeGrid18 {
+    grid-template-columns: repeat(4, minmax(112px, 1fr));
+    max-width: 680px;
+  }
+
+  .shapeGrid18Result {
+    grid-template-columns: repeat(4, minmax(100px, 1fr));
+    max-width: 620px;
+    gap: 10px;
+  }
+
+  .shapeGrid6 {
+    gap: 14px;
+    padding: 18px 8px;
+  }
+
+  .legend {
+    gap: 14px;
+    padding: 8px 12px;
+    flex-wrap: wrap;
+  }
+
+  .instruction {
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+
+  .rtValue {
+    font-size: 96px;
+  }
+
+  .goText {
+    font-size: 52px;
+  }
+
+  .waitText,
+  .earlyText {
+    font-size: 26px;
+  }
+
+  .visualStimulusSvg {
+    width: min(74%, 320px);
+  }
+
+  .stimulusBox {
+    width: min(560px, 90vw, calc(100vh - 200px));
+    max-height: calc(100vh - 200px);
+  }
+}
+
+@media (max-width: 600px) {
+  .testCard {
+    padding: 16px !important;
+  }
+
+  .testHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .readyActions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .shapeGrid18 {
+    grid-template-columns: repeat(3, minmax(88px, 1fr));
+    gap: 10px;
+  }
+
+  .shapeGrid18Result {
+    grid-template-columns: repeat(3, minmax(86px, 1fr));
+    max-width: 340px;
+    gap: 8px;
+  }
+
+  .instruction {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .shapeGrid6 {
+    grid-template-columns: repeat(2, minmax(100px, 1fr));
+    max-width: 320px;
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  .triangleSmall {
+    width: min(100%, 112px) !important;
+    height: min(100%, 112px) !important;
+  }
+
+  .triangleSmall svg {
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  .resultItem svg {
+    width: 80px !important;
+    height: 80px !important;
+  }
+
+  .resultBanner {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .resultScore {
+    font-size: 56px;
+  }
+
+  .rtValue {
+    font-size: 62px;
+  }
+
+  .goText {
+    font-size: 34px;
+  }
+
+  .waitText,
+  .earlyText {
+    font-size: 22px;
+  }
+
+  .visualStimulusSvg {
+    width: min(76%, 240px);
+  }
+
+  .stimulusBox {
+    width: min(92vw, calc(100vh - 160px));
+    max-height: calc(100vh - 160px);
+    border-width: 3px;
+  }
+
+  .legend {
+    width: 100%;
+    border-radius: 12px;
+    justify-content: flex-start;
+  }
+}

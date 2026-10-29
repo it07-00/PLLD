@@ -1,0 +1,273 @@
+.formCard { max-width: 1100px; margin: 0 auto; }
+.formTitle { font-size: 22px; font-weight: 600; color: #006241; margin-bottom: 8px; letter-spacing: -0.01em; }
+.formDesc { font-size: 15px; color: rgba(0,0,0,0.58); margin-bottom: 30px; letter-spacing: -0.01em; }
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.identityGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.identityField {
+  margin-bottom: 0;
+}
+
+.autofillMsg {
+  margin-top: -4px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.msgSuccess { color: #166534; }
+.msgError { color: #991b1b; }
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.spanFull { grid-column: 1 / -1; }
+.formActions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ── Test Runner ── */
+.testRunner {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.testProgress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+.testStep {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0,0,0,0.58);
+  background: #edebe9;
+  transition: all 0.2s;
+  letter-spacing: -0.01em;
+}
+.testStepActive {
+  background: #00754A;
+  color: #fff;
+  font-weight: 600;
+}
+.testStepDone {
+  background: #d4e9e2;
+  color: #006241;
+}
+.stepNum {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.25);
+}
+.testArea {
+  width: 100%;
+}
+
+/* ── Summary ── */
+.summary { display: flex; flex-direction: column; gap: 18px; }
+
+.overallCard {
+  text-align: center;
+  padding: 12px 20px !important;
+  border-style: solid;
+}
+.overallLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0,0,0,0.58);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+.overallRank { font-size: 48px; font-weight: 700; margin-bottom: 4px; }
+.workerName { font-size: 17px; color: rgba(0,0,0,0.87); font-weight: 500; letter-spacing: -0.01em; }
+
+.resultCards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.resultCard {
+  text-align: center;
+  padding: 16px !important;
+}
+.resultHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.resultIcon { font-size: 18px; }
+.resultTitle { font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.87); letter-spacing: -0.01em; }
+.resultScore { font-size: 40px; font-weight: 700; color: #006241; }
+.resultPct { font-size: 13px; color: rgba(0,0,0,0.38); margin-bottom: 12px; }
+
+.chartRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.miniTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0,0,0,0.58);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.recommendCard { background: #d4e9e2 !important; border-color: #006241 !important; }
+.recommendText { font-size: 14px; color: #1E3932; line-height: 1.6; }
+
+.autoSavedNotice {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: center;
+  padding: 8px 14px;
+  border-radius: 50px;
+  background: #d4e9e2;
+  color: #006241;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.summaryActions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ── Test Selection ── */
+.testSelectSection {
+  margin-top: 4px;
+}
+.testSelectLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(0,0,0,0.87);
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+.testSelectGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.testSelectItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 2px solid #edebe9;
+  background: #fafaf9;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.testSelectItem:hover {
+  border-color: #c8c6c4;
+  background: #f3f2f1;
+}
+.testSelectItem.testSelectActive {
+  border-color: #00754A;
+  background: #e8f5e9;
+}
+.testSelectCheckbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  border: 2px solid #c8c6c4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  color: transparent;
+  font-size: 13px;
+}
+.testSelectActive .testSelectCheckbox {
+  background: #00754A;
+  border-color: #00754A;
+  color: #fff;
+}
+.testSelectInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.testSelectName {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(0,0,0,0.87);
+  letter-spacing: -0.01em;
+}
+.testSelectDesc {
+  font-size: 12px;
+  color: rgba(0,0,0,0.45);
+}
+.testSelectIcon {
+  margin-left: auto;
+  color: rgba(0,0,0,0.25);
+  flex-shrink: 0;
+}
+.testSelectActive .testSelectIcon {
+  color: #00754A;
+}
+.testSelectError {
+  color: #991b1b;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 6px;
+}
+
+@media (max-width: 768px) {
+  .identityGrid { grid-template-columns: 1fr; }
+  .formGrid { grid-template-columns: 1fr; }
+  .resultCards, .chartRow { grid-template-columns: 1fr; }
+  .testSelectGrid { grid-template-columns: 1fr; }
+
+  .testProgress {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    gap: 6px;
+  }
+
+  .testStep {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+}

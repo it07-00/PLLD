@@ -1,0 +1,50 @@
+{
+  "name": "worker-test",
+  "version": "1.0.0",
+  "main": "electron-main.js",
+  "private": true,
+  "scripts": {
+    "test": "node --test src/utils/*.test.mjs src/store/*.test.mjs",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build:exe": "npm run build && electron-builder --win portable"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
+    "lucide-react": "^1.14.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3",
+    "vite": "^5.4.0",
+    "vite-plugin-singlefile": "^2.3.2"
+  },
+  "build": {
+    "appId": "com.baochau.plld",
+    "productName": "Phân loại Lao động - Môi Trường Bảo Châu",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron-main.js",
+      "package.json"
+    ],
+    "win": {
+      "signAndEditExecutable": false,
+      "verifyUpdateCodeSignature": false,
+      "target": [
+        "portable"
+      ]
+    },
+    "portable": {
+      "artifactName": "PLLĐ-BC-portable.${ext}"
+    }
+  }
+}
