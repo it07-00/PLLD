@@ -42,7 +42,7 @@ export function useRecords() {
     }
   }, [])
 
-  const triggerSync = useCallback(async ({ forceFull = false } = {}) => {
+  const triggerSync = useCallback(async ({ forceFull = false, silent = false } = {}) => {
     const config = getSyncConfig()
     if (!isSyncConfigured(config)) {
       setSyncState({ status: 'unconfigured', lastSyncAt: '', lastError: '' })
@@ -53,8 +53,10 @@ export function useRecords() {
       return { ok: false, offline: true, error: 'Đang ngoại tuyến' }
     }
 
-    setSyncState(prev => ({ ...prev, status: 'syncing', lastError: '' }))
-    const result = await syncWithServer({ forceFull })
+    if (!silent) {
+      setSyncState(prev => ({ ...prev, status: 'syncing', lastError: '' }))
+    }
+    const result = await syncWithServer({ forceFull, pullOnlyIfClean: silent })
     const latestConfig = getSyncConfig()
 
     if (result.ok) {
@@ -93,16 +95,34 @@ export function useRecords() {
 
     const onOnline = () => {
       const current = getSyncConfig()
-      if (isSyncConfigured(current) && current.autoSync) triggerSync()
+      if (isSyncConfigured(current) && current.autoSync) triggerSync({ silent: true })
       else refreshSyncBadge()
     }
     const onOffline = () => refreshSyncBadge()
+    const onVisible = () => {
+      if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return
+      const current = getSyncConfig()
+      if (isSyncConfigured(current) && current.autoSync) triggerSync({ silent: true })
+    }
+
+    const pollId = setInterval(() => {
+      if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return
+      const current = getSyncConfig()
+      if (isSyncConfigured(current) && current.autoSync) {
+        triggerSync({ silent: true })
+      }
+    }, 10000)
 
     window.addEventListener('online', onOnline)
     window.addEventListener('offline', onOffline)
+    window.addEventListener('focus', onVisible)
+    document.addEventListener('visibilitychange', onVisible)
     return () => {
+      clearInterval(pollId)
       window.removeEventListener('online', onOnline)
       window.removeEventListener('offline', onOffline)
+      window.removeEventListener('focus', onVisible)
+      document.removeEventListener('visibilitychange', onVisible)
       if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
     }
   }, [triggerSync, refreshSyncBadge])

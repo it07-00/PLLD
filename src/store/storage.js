@@ -8,6 +8,12 @@ const SETTINGS_KEY = 'envmonitor_settings'
 const DRAFT_KEY = 'envmonitor_draft'
 const DEVICE_ID_KEY = 'envmonitor_device_id'
 
+let syncDirty = false
+
+function markSyncDirty() {
+  syncDirty = true
+}
+
 function getDeviceId({ persist = true } = {}) {
   try {
     let id = localStorage.getItem(DEVICE_ID_KEY)
@@ -54,6 +60,8 @@ export function downloadJSON(value, filename) {
 
 export const storage = {
   getDeviceId,
+  isSyncDirty: () => syncDirty,
+  clearSyncDirty: () => { syncDirty = false },
 
   getAllRaw: () => {
     const records = validateRecords(read(KEY, []))
@@ -76,6 +84,7 @@ export const storage = {
     if (idx >= 0) all[idx] = normalized
     else all.unshift(normalized)
     write([[KEY, sortRecords(all)]])
+    markSyncDirty()
     return normalized
   },
 
@@ -88,6 +97,7 @@ export const storage = {
         : r
     )
     write([[KEY, all]])
+    markSyncDirty()
   },
 
   deleteCompany: (companyName) => {
@@ -101,7 +111,10 @@ export const storage = {
       deleted++
       return { ...record, deletedAt: now, updatedAt: now, deviceId }
     })
-    if (deleted) write([[KEY, all]])
+    if (deleted) {
+      write([[KEY, all]])
+      markSyncDirty()
+    }
     return deleted
   },
 
@@ -123,7 +136,10 @@ export const storage = {
       count++
       return { ...record, updatedAt: now, deviceId, worker: { ...record.worker, companyName: name } }
     })
-    if (count) write([[KEY, records]])
+    if (count) {
+      write([[KEY, records]])
+      markSyncDirty()
+    }
     return count
   },
 
@@ -344,6 +360,7 @@ export const storage = {
         if (restoreSettings && incoming.settings || replaceCorrupt) entries.push([SETTINGS_KEY, incoming.settings || normalizeSettings({})])
         if (incomingDraft) entries.push([DRAFT_KEY, incomingDraft])
         write(entries)
+        markSyncDirty()
         resolve({ added: merged.added, updated: merged.updated, skipped: merged.skipped, settingsRestored: restoreSettings && Boolean(incoming.settings), draftRestored: Boolean(incomingDraft) })
       } catch (error) { reject(new Error(`Không nhập dữ liệu: ${error.message}`)) }
     }

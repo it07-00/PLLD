@@ -12,6 +12,7 @@ const DEFAULT_CONFIG = {
 }
 
 let activeSyncPromise = null
+let syncedInSession = false
 
 export function getSyncConfig() {
   try {
@@ -70,7 +71,7 @@ export async function testSyncConnection(apiUrl, apiKey) {
   })
 }
 
-export async function syncWithServer({ forceFull = false } = {}) {
+export async function syncWithServer({ forceFull = false, pullOnlyIfClean = false } = {}) {
   if (activeSyncPromise) return activeSyncPromise
 
   const run = async () => {
@@ -83,8 +84,9 @@ export async function syncWithServer({ forceFull = false } = {}) {
     }
 
     const endpoint = buildEndpoint(config.apiUrl, 'sync')
-    const localRecords = storage.getAllRaw()
     const since = forceFull ? 0 : (Number(config.lastServerTime) || 0)
+    const shouldSendLocal = forceFull || since === 0 || !syncedInSession || !pullOnlyIfClean || storage.isSyncDirty()
+    const localRecords = shouldSendLocal ? storage.getAllRaw() : []
 
     const result = await requestJson(endpoint, {
       method: 'POST',
@@ -101,6 +103,10 @@ export async function syncWithServer({ forceFull = false } = {}) {
 
     const merged = storage.applySyncMerge(result.records || [])
     const now = new Date().toISOString()
+    syncedInSession = true
+    if (shouldSendLocal) {
+      storage.clearSyncDirty()
+    }
     saveSyncConfig({
       lastSyncAt: now,
       lastServerTime: Number(result.serverTime) || config.lastServerTime || 0,
