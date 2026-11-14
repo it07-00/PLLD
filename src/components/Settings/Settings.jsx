@@ -1,13 +1,18 @@
 import React, { useMemo, useState, useRef } from 'react'
 import { Card, Button, Input, Select } from '../UI/UI'
 import { storage } from '../../store/storage'
+import { getSyncConfig, saveSyncConfig, testSyncConnection } from '../../store/sync'
 import { normalizeCompanyName } from '../../utils/company.mjs'
 import { deleteCompanyAfterConfirmation } from '../../utils/actions.mjs'
-import { Download, Upload, TriangleAlert, CheckCircle2 } from 'lucide-react'
+import { Download, Upload, TriangleAlert, CheckCircle2, Cloud, RefreshCw } from 'lucide-react'
 import styles from './Settings.module.css'
 
-export default function Settings({ onExport, onImport, onClear, onDeleteCompany, onAssignCompany, records }) {
+export default function Settings({ onExport, onImport, onClear, onDeleteCompany, onAssignCompany, records, syncState, onSyncNow, onSyncConfigChange }) {
   const [settings, setSettings] = useState(() => storage.getSettings())
+  const [syncForm, setSyncForm] = useState(() => getSyncConfig())
+  const [syncMsg, setSyncMsg] = useState('')
+  const [syncErr, setSyncErr] = useState('')
+  const [testingSync, setTestingSync] = useState(false)
   const [saved, setSaved] = useState(false)
   const [importMsg, setImportMsg] = useState('')
   const [deleteCompany, setDeleteCompany] = useState('')
@@ -104,8 +109,114 @@ export default function Settings({ onExport, onImport, onClear, onDeleteCompany,
     }
   }
 
+  const handleSaveSync = () => {
+    const savedCfg = saveSyncConfig({
+      apiUrl: syncForm.apiUrl,
+      apiKey: syncForm.apiKey,
+      autoSync: Boolean(syncForm.autoSync),
+    })
+    setSyncForm(savedCfg)
+    setSyncErr('')
+    setSyncMsg('Đã lưu cấu hình đồng bộ.')
+    onSyncConfigChange?.()
+  }
+
+  const handleTestSync = async () => {
+    setTestingSync(true)
+    setSyncMsg('')
+    setSyncErr('')
+    try {
+      const res = await testSyncConnection(syncForm.apiUrl, syncForm.apiKey)
+      setSyncMsg(`Kết nối thành công! Máy chủ đang lưu ${res.activeRecords ?? 0} hồ sơ.`)
+    } catch (error) {
+      setSyncErr(error.message || 'Không kết nối được máy chủ.')
+    } finally {
+      setTestingSync(false)
+    }
+  }
+
+  const handleRunSync = async (forceFull = false) => {
+    saveSyncConfig({
+      apiUrl: syncForm.apiUrl,
+      apiKey: syncForm.apiKey,
+      autoSync: Boolean(syncForm.autoSync),
+    })
+    onSyncConfigChange?.()
+    setSyncMsg('')
+    setSyncErr('')
+    const res = await onSyncNow?.({ forceFull })
+    setSyncForm(getSyncConfig())
+    if (!res) return
+    if (res.ok) {
+      setSyncMsg(`Đồng bộ hoàn tất: nhận mới ${res.added}, cập nhật ${res.updated}, đã đẩy lên ${res.upserted} hồ sơ.`)
+    } else if (res.unconfigured) {
+      setSyncErr('Vui lòng nhập đầy đủ Địa chỉ API và Mã bảo mật trước khi đồng bộ.')
+    } else {
+      setSyncErr(res.error || 'Đồng bộ thất bại.')
+    }
+  }
+
   return (
     <div className={styles.settings}>
+      <Card>
+        <h3 className={styles.sectionTitle}>
+          <Cloud size={18} style={{ verticalAlign: 'text-bottom', marginRight: 6 }} />
+          Đồng bộ Online (Hosting iNET)
+        </h3>
+        <p className={styles.sectionDesc}>
+          Dữ liệu vẫn lưu cục bộ khi mất mạng và tự động đồng bộ 2 chiều giữa các máy qua hosting iNET khi có Internet.
+        </p>
+        <div className={styles.formGrid}>
+          <Input
+            label="Địa chỉ API trên iNET"
+            id="sync-api-url"
+            value={syncForm.apiUrl || ''}
+            onChange={e => { setSyncForm(s => ({ ...s, apiUrl: e.target.value })); setSyncMsg(''); setSyncErr('') }}
+            placeholder="https://tenmiencuaban.com/api/index.php"
+            className={styles.spanFull}
+          />
+          <Input
+            label="Mã bảo mật (API Key)"
+            id="sync-api-key"
+            type="password"
+            value={syncForm.apiKey || ''}
+            onChange={e => { setSyncForm(s => ({ ...s, apiKey: e.target.value })); setSyncMsg(''); setSyncErr('') }}
+            placeholder="Nhập mã bảo mật trùng với config.php"
+            className={styles.spanFull}
+          />
+        </div>
+        <label className={styles.syncCheck}>
+          <input
+            type="checkbox"
+            checked={Boolean(syncForm.autoSync)}
+            onChange={e => setSyncForm(s => ({ ...s, autoSync: e.target.checked }))}
+          />
+          Tự động đồng bộ khi mở app, khi có mạng lại và sau mỗi lần lưu hồ sơ
+        </label>
+        <div className={styles.syncActions}>
+          <Button variant="primary" size="sm" onClick={handleSaveSync}>Lưu cấu hình</Button>
+          <Button variant="ghost" size="sm" onClick={handleTestSync} disabled={testingSync || !syncForm.apiUrl || !syncForm.apiKey}>
+            {testingSync ? 'Đang kiểm tra...' : 'Kiểm tra kết nối'}
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => handleRunSync(false)} disabled={syncState?.status === 'syncing'}>
+            <RefreshCw size={14} style={{ marginRight: 4 }} />
+            {syncState?.status === 'syncing' ? 'Đang đồng bộ...' : 'Đồng bộ ngay'}
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => handleRunSync(true)} disabled={syncState?.status === 'syncing'}>
+            Đồng bộ lại toàn bộ
+          </Button>
+        </div>
+        {syncState?.lastSyncAt && (
+          <div className={styles.syncMeta}>
+            Lần đồng bộ gần nhất: {new Date(syncState.lastSyncAt).toLocaleString('vi-VN')}
+          </div>
+        )}
+        {syncMsg && <div className={styles.importMsg} style={{ marginTop: 10 }}>{syncMsg}</div>}
+        {(syncErr || syncState?.lastError) && (
+          <div className={styles.syncErrorMsg} role="alert">{syncErr || syncState.lastError}</div>
+        )}
+      </Card>
+
       <Card>
         <h3 className={styles.sectionTitle}>Thông tin mặc định</h3>
         <p className={styles.sectionDesc}>Các giá trị mặc định sẽ được tự động điền khi tạo kiểm tra mới</p>

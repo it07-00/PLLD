@@ -48,12 +48,17 @@ export function normalizeRecord(input) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input.date || '') || Number.isNaN(Date.parse(`${input.date}T00:00:00Z`)) || new Date(`${input.date}T00:00:00Z`).toISOString().slice(0, 10) !== input.date) throw new Error('Ngày kiểm tra không hợp lệ')
   if (input.time && !/^([01]\d|2[0-3]):[0-5]\d$/.test(input.time)) throw new Error('Giờ kiểm tra không hợp lệ')
   if (input.createdAt && (typeof input.createdAt !== 'string' || Number.isNaN(Date.parse(input.createdAt)))) throw new Error('Mốc thời gian hồ sơ không hợp lệ')
+  if (input.updatedAt && (typeof input.updatedAt !== 'string' || Number.isNaN(Date.parse(input.updatedAt)))) throw new Error('Mốc cập nhật hồ sơ không hợp lệ')
+  if (input.deletedAt != null && (typeof input.deletedAt !== 'string' || Number.isNaN(Date.parse(input.deletedAt)))) throw new Error('Mốc xóa hồ sơ không hợp lệ')
   const worker = normalizeWorker(input.worker)
   const tests = normalizeTests(input.tests)
   const rank = calcOverallRank(tests.memory?.rank.label, tests.sound?.rank.label, tests.visual?.rank.label)
   return {
     id: input.id, date: input.date, time: input.time || '', worker, tests,
     ...(input.createdAt ? { createdAt: input.createdAt } : {}),
+    ...(input.updatedAt ? { updatedAt: input.updatedAt } : {}),
+    ...(input.deletedAt ? { deletedAt: input.deletedAt } : {}),
+    ...(text(input.deviceId) ? { deviceId: text(input.deviceId) } : {}),
     selectedTests: Object.fromEntries(TEST_KEYS.map(key => [key, Boolean(tests[key])])),
     overall: { rank: rank.label, color: rank.color, recommendation: getRecommendation(rank.label) },
   }
@@ -72,16 +77,43 @@ export function sortRecords(records) {
   return [...records].sort((a, b) => `${b.date} ${b.time || ''}`.localeCompare(`${a.date} ${a.time || ''}`) || timestamp(b) - timestamp(a) || String(b.id).localeCompare(String(a.id), undefined, { numeric: true }))
 }
 
+const recordVersionMs = record => {
+  const iso = record.updatedAt || record.deletedAt || record.createdAt || ''
+  const parsed = iso ? Date.parse(iso) : NaN
+  return Number.isFinite(parsed) ? parsed : 0
+}
+
+export const activeRecords = records => records.filter(record => !record.deletedAt)
+
 export function mergeRecords(existing, incoming) {
-  const ids = new Set(existing.map(record => String(record.id)))
-  const added = []
+  const byId = new Map()
+  for (const record of existing) byId.set(String(record.id), record)
+
+  let added = 0
+  let updated = 0
   let skipped = 0
+  const seenIncoming = new Set()
+
   for (const record of incoming) {
-    if (ids.has(String(record.id))) { skipped++; continue }
-    ids.add(String(record.id))
-    added.push(record)
+    const key = String(record.id)
+    if (seenIncoming.has(key)) { skipped++; continue }
+    seenIncoming.add(key)
+
+    const current = byId.get(key)
+    if (!current) {
+      byId.set(key, record)
+      added++
+      continue
+    }
+
+    if (recordVersionMs(record) > recordVersionMs(current)) {
+      byId.set(key, record)
+      updated++
+    } else {
+      skipped++
+    }
   }
-  return { records: sortRecords([...existing, ...added]), added: added.length, skipped }
+  return { records: sortRecords(Array.from(byId.values())), added, updated, skipped }
 }
 
 export function normalizeSettings(value) {

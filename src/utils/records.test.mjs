@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { normalizeRecord, decodeBackup, sortRecords } from './records.mjs'
+import { normalizeRecord, decodeBackup, sortRecords, mergeRecords, activeRecords } from './records.mjs'
 import { unitStatistics } from './statistics.mjs'
 import { autofillWorker } from './workerLookup.mjs'
 import { validateSession } from './session.mjs'
@@ -60,4 +60,33 @@ test('records with UUID IDs are ordered by exact completion timestamp within the
   const older = { ...record('A'), id: 'zz-old', createdAt: '2026-10-29T08:00:01Z', time: '15:00' }
   const newer = { ...record('A'), id: 'aa-new', createdAt: '2026-10-29T08:00:59Z', time: '15:00' }
   assert.deepEqual(sortRecords([older, newer]).map(item => item.id), ['aa-new', 'zz-old'])
+})
+
+test('mergeRecords updates newer versions and propagates soft deletes', () => {
+  const base = normalizeRecord({
+    id: 'sync-1',
+    date: '2026-11-14',
+    updatedAt: '2026-11-14T01:00:00.000Z',
+    worker: { name: 'Nguyen Van A', code: '01', companyName: 'Bao Chau' },
+    tests: { memory: { score: 3 } },
+  })
+  const staleIncoming = normalizeRecord({
+    ...base,
+    updatedAt: '2026-11-14T00:30:00.000Z',
+    worker: { ...base.worker, name: 'Cu' },
+  })
+  const newerDeleted = normalizeRecord({
+    ...base,
+    updatedAt: '2026-11-14T02:00:00.000Z',
+    deletedAt: '2026-11-14T02:00:00.000Z',
+  })
+
+  const first = mergeRecords([base], [staleIncoming])
+  assert.equal(first.updated, 0)
+  assert.equal(first.skipped, 1)
+  assert.equal(first.records[0].worker.name, 'Nguyen Van A')
+
+  const second = mergeRecords([base], [newerDeleted])
+  assert.equal(second.updated, 1)
+  assert.equal(activeRecords(second.records).length, 0)
 })

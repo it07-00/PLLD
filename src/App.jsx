@@ -32,7 +32,7 @@ export default function App() {
   const [summaryRecord, setSummaryRecord] = useState(null)
   const [selectedRecordId, setSelectedRecordId] = useState(null)
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
-  const { records, error, refresh, saveRecord, deleteRecord, deleteCompany, exportData, importData, clearAll } = useRecords()
+  const { records, error, syncState, refresh, refreshSyncBadge, triggerSync, scheduleAutoSync, saveRecord, deleteRecord, deleteCompany, exportData, importData, clearAll } = useRecords()
   const isImmersiveMode = page === 'new-test' && session && !session.record
 
   useEffect(() => {
@@ -150,14 +150,36 @@ export default function App() {
     }
     if (page === 'history') return <History records={records} selectedId={selectedRecordId} onDelete={id => safe(() => deleteRecord(id))} onNavigate={navigate} />
     if (page === 'stats') return <Stats records={records} />
-    if (page === 'settings') return <Settings records={records} onExport={() => safe(exportData)} onImport={importBackup} onClear={clearAll} onDeleteCompany={deleteCompany} onAssignCompany={(ids, name) => { const count = storage.assignCompany(ids, name); refresh(); return count }} />
+    if (page === 'settings') return <Settings records={records} syncState={syncState} onSyncNow={triggerSync} onSyncConfigChange={refreshSyncBadge} onExport={() => safe(exportData)} onImport={importBackup} onClear={clearAll} onDeleteCompany={deleteCompany} onAssignCompany={(ids, name) => { const count = storage.assignCompany(ids, name); refresh(); if (count) scheduleAutoSync(); return count }} />
     return <Dashboard records={records} onNavigate={navigate} />
   }
+
+  const syncLabel = syncState.status === 'syncing'
+    ? 'Đang đồng bộ...'
+    : syncState.status === 'offline'
+      ? 'Ngoại tuyến'
+      : syncState.status === 'error'
+        ? 'Lỗi đồng bộ (Thử lại)'
+        : syncState.status === 'unconfigured'
+          ? 'Cài đặt đồng bộ'
+          : 'Đồng bộ ngay'
+
+  const syncButton = (
+    <Button
+      variant={syncState.status === 'error' ? 'danger' : 'ghost'}
+      size="sm"
+      disabled={syncState.status === 'syncing'}
+      onClick={() => (syncState.status === 'unconfigured' ? navigate('settings') : triggerSync())}
+      title={syncState.lastError || (syncState.lastSyncAt ? `Đồng bộ gần nhất: ${new Date(syncState.lastSyncAt).toLocaleString('vi-VN')}` : 'Đồng bộ dữ liệu với hosting iNET')}
+    >
+      {syncLabel}
+    </Button>
+  )
 
   return <>
     {!isImmersiveMode && <Sidebar currentPage={page} onNavigate={navigate} isOpen={isSidebarOpen} />}
     <div className={`${layoutStyles.mainArea} ${!isSidebarOpen ? layoutStyles.mainExpanded : ''} ${isImmersiveMode ? layoutStyles.mainImmersive : ''}`}>
-      {!isImmersiveMode && <Topbar currentPage={page} onToggleSidebar={() => setIsSidebarOpen(value => !value)} actions={page === 'dashboard' ? <Button onClick={() => navigate('new-test')}>+ Kiểm tra mới</Button> : page === 'history' ? <Button onClick={() => safe(exportData)}>Xuất JSON</Button> : null} />}
+      {!isImmersiveMode && <Topbar currentPage={page} onToggleSidebar={() => setIsSidebarOpen(value => !value)} actions={<>{syncButton}{page === 'dashboard' ? <Button onClick={() => navigate('new-test')}>+ Kiểm tra mới</Button> : page === 'history' ? <Button onClick={() => safe(exportData)}>Xuất JSON</Button> : null}</>} />}
       <div className={isImmersiveMode ? layoutStyles.contentImmersive : layoutStyles.content}>
         {actionError && <div className="app-notice" role="alert">{actionError}<Button onClick={() => setActionError('')}>Đóng thông báo</Button></div>}
         {draftError && <div className="app-notice" role="alert">{draftError}<Button onClick={() => safe(storage.exportRaw)}>Tải dữ liệu gốc</Button>{session ? <Button onClick={exportSession}>Xuất phiên đang làm</Button> : <Button onClick={discardSession}>Xóa bản nháp hỏng</Button>}</div>}

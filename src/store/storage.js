@@ -1,11 +1,28 @@
 import { normalizeCompanyName } from '../utils/company.mjs'
 import { vietnamDateTime } from '../utils/datetime.mjs'
-import { validateRecords, normalizeRecord, normalizeSettings, decodeBackup, mergeRecords, sortRecords, excelIdentity, compareExcelRecords } from '../utils/records.mjs'
+import { validateRecords, normalizeRecord, normalizeSettings, decodeBackup, mergeRecords, sortRecords, activeRecords, excelIdentity, compareExcelRecords } from '../utils/records.mjs'
 import { validateSession } from '../utils/session.mjs'
 
 const KEY = 'envmonitor_worker_tests'
 const SETTINGS_KEY = 'envmonitor_settings'
 const DRAFT_KEY = 'envmonitor_draft'
+const DEVICE_ID_KEY = 'envmonitor_device_id'
+
+function getDeviceId({ persist = true } = {}) {
+  try {
+    let id = localStorage.getItem(DEVICE_ID_KEY)
+    if (!id) {
+      if (!persist) return 'dev-local'
+      id = typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `dev-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+      localStorage.setItem(DEVICE_ID_KEY, id)
+    }
+    return id
+  } catch {
+    return 'dev-local'
+  }
+}
 
 function read(key, fallback) {
   try {
@@ -36,34 +53,55 @@ export function downloadJSON(value, filename) {
 }
 
 export const storage = {
-  getAll: () => {
+  getDeviceId,
+
+  getAllRaw: () => {
     const records = validateRecords(read(KEY, []))
     if (new Set(records.map(r => String(r.id))).size !== records.length) throw new Error('Kho dữ liệu có mã hồ sơ trùng. Hãy tải dữ liệu gốc và khôi phục để loại trùng.')
     return sortRecords(records)
   },
 
+  getAll: () => activeRecords(storage.getAllRaw()),
+
   save: (record) => {
-    record = normalizeRecord(record)
-    const all = storage.getAll()
-    const idx = all.findIndex(r => String(r.id) === String(record.id))
-    if (idx >= 0) all[idx] = record
-    else all.unshift(record)
+    const now = new Date().toISOString()
+    const normalized = normalizeRecord({
+      ...record,
+      updatedAt: record.updatedAt || now,
+      deletedAt: null,
+      deviceId: record.deviceId || getDeviceId(),
+    })
+    const all = storage.getAllRaw()
+    const idx = all.findIndex(r => String(r.id) === String(normalized.id))
+    if (idx >= 0) all[idx] = normalized
+    else all.unshift(normalized)
     write([[KEY, sortRecords(all)]])
-    return record
+    return normalized
   },
 
   delete: (id) => {
-    const all = storage.getAll().filter(r => r.id !== id)
+    const now = new Date().toISOString()
+    const deviceId = getDeviceId({ persist: false })
+    const all = storage.getAllRaw().map(r =>
+      String(r.id) === String(id) && !r.deletedAt
+        ? { ...r, deletedAt: now, updatedAt: now, deviceId }
+        : r
+    )
     write([[KEY, all]])
   },
 
   deleteCompany: (companyName) => {
     const company = normalizeCompanyName(companyName)
     if (!company) return 0
-    const all = storage.getAll()
-    const remaining = all.filter(record => normalizeCompanyName(record.worker?.companyName) !== company)
-    const deleted = all.length - remaining.length
-    if (deleted) write([[KEY, remaining]])
+    const now = new Date().toISOString()
+    const deviceId = getDeviceId({ persist: false })
+    let deleted = 0
+    const all = storage.getAllRaw().map(record => {
+      if (record.deletedAt || normalizeCompanyName(record.worker?.companyName) !== company) return record
+      deleted++
+      return { ...record, deletedAt: now, updatedAt: now, deviceId }
+    })
+    if (deleted) write([[KEY, all]])
     return deleted
   },
 
@@ -77,14 +115,26 @@ export const storage = {
     const name = String(companyName || '').trim().replace(/\s+/g, ' ')
     if (!name || !ids.length) throw new Error('Chọn hồ sơ và nhập tên công ty')
     const selected = new Set(ids.map(String))
+    const now = new Date().toISOString()
+    const deviceId = getDeviceId()
     let count = 0
-    const records = storage.getAll().map(record => {
-      if (!selected.has(String(record.id)) || normalizeCompanyName(record.worker.companyName)) return record
+    const records = storage.getAllRaw().map(record => {
+      if (record.deletedAt || !selected.has(String(record.id)) || normalizeCompanyName(record.worker.companyName)) return record
       count++
-      return { ...record, worker: { ...record.worker, companyName: name } }
+      return { ...record, updatedAt: now, deviceId, worker: { ...record.worker, companyName: name } }
     })
     if (count) write([[KEY, records]])
     return count
+  },
+
+  applySyncMerge: (remoteRecords) => {
+    const incoming = validateRecords(remoteRecords || [])
+    const existing = storage.getAllRaw()
+    const merged = mergeRecords(existing, incoming)
+    if (merged.added > 0 || merged.updated > 0) {
+      write([[KEY, merged.records]])
+    }
+    return merged
   },
 
   getDraft: () => validateSession(read(DRAFT_KEY, null)),
@@ -288,13 +338,13 @@ export const storage = {
         const incoming = decodeBackup(value)
         const draft = value?.format === 'plld-recovery' && value.draft ? JSON.parse(value.draft) : value?.draft
         const incomingDraft = draft ? validateSession(draft) : null
-        const existing = replaceCorrupt ? [] : storage.getAll()
+        const existing = replaceCorrupt ? [] : storage.getAllRaw()
         const merged = mergeRecords(existing, incoming.records)
         const entries = [[KEY, merged.records]]
         if (restoreSettings && incoming.settings || replaceCorrupt) entries.push([SETTINGS_KEY, incoming.settings || normalizeSettings({})])
         if (incomingDraft) entries.push([DRAFT_KEY, incomingDraft])
         write(entries)
-        resolve({ added: merged.added, skipped: merged.skipped, settingsRestored: restoreSettings && Boolean(incoming.settings), draftRestored: Boolean(incomingDraft) })
+        resolve({ added: merged.added, updated: merged.updated, skipped: merged.skipped, settingsRestored: restoreSettings && Boolean(incoming.settings), draftRestored: Boolean(incomingDraft) })
       } catch (error) { reject(new Error(`Không nhập dữ liệu: ${error.message}`)) }
     }
     reader.onerror = () => reject(new Error('Không đọc được file JSON'))
