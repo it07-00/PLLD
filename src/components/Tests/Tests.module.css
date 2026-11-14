@@ -1,13 +1,13 @@
 /* ── Test Card ── */
 .testCard { 
   width: 100%;
-  min-height: 80vh;
+  min-height: 0;
   margin: 0 auto; 
   display: flex; 
   flex-direction: column;
-  border-radius: 0 !important;
+  border-radius: 12px !important;
   box-shadow: none !important;
-  padding: 32px !important;
+  padding: clamp(16px, 2.5vh, 28px) !important;
 }
 .testHeader {
   display: flex;
@@ -235,8 +235,8 @@
 
 /* ── Stimulus Box ── */
 .stimulusBox {
-  width: min(760px, 90vw, calc(100vh - 240px));
-  max-height: calc(100vh - 240px);
+  width: min(720px, 88vw, calc(100dvh - 210px));
+  max-height: calc(100dvh - 210px);
   aspect-ratio: 1 / 1;
   border-radius: 20px;
   border: 4px solid;
@@ -340,8 +340,8 @@
   }
 
   .stimulusBox {
-    width: min(680px, 90vw, calc(100vh - 220px));
-    max-height: calc(100vh - 220px);
+    width: min(640px, 88vw, calc(100dvh - 210px));
+    max-height: calc(100dvh - 210px);
   }
 }
 
@@ -486,5 +486,18 @@
     width: 100%;
     border-radius: 12px;
     justify-content: flex-start;
+  }
+}
+
+@media (max-height: 760px) {
+  .testCard {
+    padding: 16px !important;
+  }
+  .testHeader {
+    margin-bottom: 10px;
+  }
+  .stimulusBox {
+    width: min(560px, 86vw, calc(100dvh - 175px));
+    max-height: calc(100dvh - 175px);
   }
 }
