@@ -54,16 +54,16 @@
   justify-content: center;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: 14px;
-  margin-bottom: 14px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 .testStep {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: 50px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: rgba(0,0,0,0.58);
   background: #edebe9;
