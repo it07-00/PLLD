@@ -3,29 +3,29 @@
 @import "@fontsource/inter/600.css";
 @import "@fontsource/inter/700.css";
 
-/* ── Design Tokens — Starbucks-Inspired ── */
+/* ── Design Tokens — Modern Environmental Tech ── */
 :root {
-  --green-starbucks: #006241;
-  --green-accent: #00754A;
-  --green-house: #1E3932;
-  --green-uplift: #2b5148;
-  --green-light: #d4e9e2;
-  --gold: #cba258;
-  --gold-light: #dfc49d;
-  --gold-lightest: #faf6ee;
-  --canvas: #f2f0eb;
-  --ceramic: #edebe9;
+  --green-starbucks: #047857;
+  --green-accent: #059669;
+  --green-house: #064e3b;
+  --green-uplift: #0f2922;
+  --green-light: #d1fae5;
+  --gold: #d97706;
+  --gold-light: #fde68a;
+  --gold-lightest: #fffbeb;
+  --canvas: #f4f7f9;
+  --ceramic: #e2e8f0;
   --white: #ffffff;
-  --neutral-cool: #f9f9f9;
-  --text-black: rgba(0,0,0,0.87);
-  --text-black-soft: rgba(0,0,0,0.58);
-  --text-white: rgba(255,255,255,1);
-  --text-white-soft: rgba(255,255,255,0.70);
-  --red: #c82014;
-  --card-radius: 12px;
-  --btn-radius: 50px;
-  --card-shadow: 0 0 0.5px rgba(0,0,0,0.14), 0 1px 1px rgba(0,0,0,0.24);
-  --nav-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 2px 2px rgba(0,0,0,0.06), 0 0 2px rgba(0,0,0,0.07);
+  --neutral-cool: #f8fafc;
+  --text-black: #0f172a;
+  --text-black-soft: #475569;
+  --text-white: #ffffff;
+  --text-white-soft: rgba(255, 255, 255, 0.72);
+  --red: #dc2626;
+  --card-radius: 16px;
+  --btn-radius: 12px;
+  --card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -4px rgba(15, 23, 42, 0.06);
+  --nav-shadow: 0 1px 0 rgba(15, 23, 42, 0.06);
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 16px;
