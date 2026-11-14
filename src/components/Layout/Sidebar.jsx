@@ -11,31 +11,34 @@ const NAV_ITEMS = [
   { key: 'settings', label: 'Cài đặt', icon: <Settings size={20} /> },
 ]
 
-export default function Sidebar({ currentPage, onNavigate, isOpen }) {
+export default function Sidebar({ currentPage, onNavigate, isOpen, onClose }) {
   return (
-    <aside className={`${styles.sidebar} ${!isOpen ? styles.sidebarCollapsed : ''}`}>
-      <div className={styles.sidebarHeader}>
-        <img src={`data:image/png;base64,${LOGO_BASE64}`} alt="Bảo Châu" className={styles.logoImg} />
-        <div className={styles.logoText}>
-          <span className={styles.logoTitle}>Môi Trường Bảo Châu</span>
-          <span className={styles.logoSub}>Phân loại lao động</span>
+    <>
+      {isOpen && <div className={styles.sidebarBackdrop} onClick={onClose} aria-hidden="true" />}
+      <aside className={`${styles.sidebar} ${!isOpen ? styles.sidebarCollapsed : ''}`}>
+        <div className={styles.sidebarHeader}>
+          <img src={`data:image/png;base64,${LOGO_BASE64}`} alt="Bảo Châu" className={styles.logoImg} />
+          <div className={styles.logoText}>
+            <span className={styles.logoTitle}>Môi Trường Bảo Châu</span>
+            <span className={styles.logoSub}>Phân loại lao động</span>
+          </div>
         </div>
-      </div>
-      <nav className={styles.nav}>
-        {NAV_ITEMS.map(item => (
-          <button
-            key={item.key}
-            className={`${styles.navItem} ${currentPage === item.key ? styles.navActive : ''}`}
-            onClick={() => onNavigate(item.key)}
-          >
-            <span className={styles.navIcon}>{item.icon}</span>
-            <span className={styles.navLabel}>{item.label}</span>
-          </button>
-        ))}
-      </nav>
-      <div className={styles.sidebarFooter}>
-        <div className={styles.copyright}>© 2026 Bảo Châu Environment</div>
-      </div>
-    </aside>
+        <nav className={styles.nav}>
+          {NAV_ITEMS.map(item => (
+            <button
+              key={item.key}
+              className={`${styles.navItem} ${currentPage === item.key ? styles.navActive : ''}`}
+              onClick={() => onNavigate(item.key)}
+            >
+              <span className={styles.navIcon}>{item.icon}</span>
+              <span className={styles.navLabel}>{item.label}</span>
+            </button>
+          ))}
+        </nav>
+        <div className={styles.sidebarFooter}>
+          <div className={styles.copyright}>© 2026 Bảo Châu Environment</div>
+        </div>
+      </aside>
+    </>
   )
 }

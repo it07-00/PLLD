@@ -31,7 +31,7 @@ export default function App() {
   const [actionError, setActionError] = useState('')
   const [summaryRecord, setSummaryRecord] = useState(null)
   const [selectedRecordId, setSelectedRecordId] = useState(null)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => (typeof window !== 'undefined' ? window.innerWidth > 768 : true))
   const { records, error, syncState, refresh, refreshSyncBadge, triggerSync, scheduleAutoSync, saveRecord, deleteRecord, deleteCompany, exportData, importData, clearAll } = useRecords()
   const isImmersiveMode = page === 'new-test' && session && !session.record
 
@@ -67,6 +67,7 @@ export default function App() {
     setPage(nextPage)
     setSelectedRecordId(nextPage === 'history' ? id || null : null)
     if (nextPage === 'new-test') setSummaryRecord(null)
+    if (typeof window !== 'undefined' && window.innerWidth <= 640) setIsSidebarOpen(false)
   }
 
   const safe = action => {
@@ -177,7 +178,7 @@ export default function App() {
   )
 
   return <>
-    {!isImmersiveMode && <Sidebar currentPage={page} onNavigate={navigate} isOpen={isSidebarOpen} />}
+    {!isImmersiveMode && <Sidebar currentPage={page} onNavigate={navigate} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />}
     <div className={`${layoutStyles.mainArea} ${!isSidebarOpen ? layoutStyles.mainExpanded : ''} ${isImmersiveMode ? layoutStyles.mainImmersive : ''}`}>
       {!isImmersiveMode && <Topbar currentPage={page} onToggleSidebar={() => setIsSidebarOpen(value => !value)} actions={<>{syncButton}{page === 'dashboard' ? <Button onClick={() => navigate('new-test')}>+ Kiểm tra mới</Button> : page === 'history' ? <Button onClick={() => safe(exportData)}>Xuất JSON</Button> : null}</>} />}
       <div className={isImmersiveMode ? layoutStyles.contentImmersive : layoutStyles.content}>

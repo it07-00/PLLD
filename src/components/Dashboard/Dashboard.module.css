@@ -172,7 +172,16 @@
 }
 .linkBtn:hover { text-decoration: underline; }
 
+@media (max-width: 960px) {
+  .row { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 768px) {
   .metrics { grid-template-columns: 1fr; }
-  .row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .dashboard { gap: 16px; }
+  .table th, .table td { padding: 8px 10px; white-space: nowrap; }
+  .startBtn { width: 100%; justify-content: center; }
 }

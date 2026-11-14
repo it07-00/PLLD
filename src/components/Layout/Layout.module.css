@@ -218,14 +218,60 @@
   .content { max-width: 100%; padding: 0; }
 }
 
-/* ── Responsive 1024px ── */
+.sidebarBackdrop {
+  display: none;
+}
+
+/* ── Responsive 1024px (Tablet) ── */
 @media (max-width: 1024px) {
-  .sidebar { width: 72px; }
-  .sidebarHeader { padding: 16px 8px; justify-content: center; }
-  .logoText { display: none; }
-  .navLabel { display: none; }
-  .navItem { justify-content: center; padding: 10px 8px; }
-  .navIcon { width: auto; font-size: 20px; }
-  .sidebarFooter { display: none; }
-  .mainArea { margin-left: 72px; }
+  .topbar { padding: 0 20px; }
+  .content { padding: 20px 20px 32px; }
+  .sidebar { width: 240px; }
+  .sidebarCollapsed { width: 68px; }
+  .mainArea { margin-left: 240px; }
+  .mainExpanded { margin-left: 68px; }
+}
+
+/* ── Responsive 640px (Mobile) ── */
+@media (max-width: 640px) {
+  .sidebarBackdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    z-index: 190;
+  }
+  .sidebar {
+    width: 260px;
+    z-index: 200;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .sidebarCollapsed {
+    width: 260px;
+    transform: translateX(-100%);
+  }
+  .mainArea,
+  .mainExpanded {
+    margin-left: 0 !important;
+  }
+  .topbar {
+    height: auto;
+    min-height: 56px;
+    padding: 8px 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .topbarLeft {
+    gap: 10px;
+  }
+  .pageTitle {
+    font-size: 16px;
+  }
+  .topbarActions {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .content {
+    padding: 14px 12px 28px;
+  }
 }
