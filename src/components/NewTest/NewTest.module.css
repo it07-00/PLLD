@@ -273,10 +273,21 @@
   .testStep {
     flex: 1 1 0;
     min-width: 0;
-    justify-content: center;
+    justify-content: flex-start;
     padding: 6px 8px;
     font-size: 11px;
     white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .stepNum {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+  }
+
+  .testStep > span:last-child {
     overflow: hidden;
     text-overflow: ellipsis;
   }
