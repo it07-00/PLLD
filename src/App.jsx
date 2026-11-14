@@ -184,7 +184,7 @@ export default function App() {
       <div className={isImmersiveMode ? layoutStyles.contentImmersive : layoutStyles.content}>
         {actionError && <div className="app-notice" role="alert">{actionError}<Button onClick={() => setActionError('')}>Đóng thông báo</Button></div>}
         {draftError && <div className="app-notice" role="alert">{draftError}<Button onClick={() => safe(storage.exportRaw)}>Tải dữ liệu gốc</Button>{session ? <Button onClick={exportSession}>Xuất phiên đang làm</Button> : <Button onClick={discardSession}>Xóa bản nháp hỏng</Button>}</div>}
-        {session && <div className="app-notice"><span>Phiên đang dở: {session.worker.name} · {session.worker.companyName}</span>{page !== 'new-test' && <Button onClick={() => navigate('new-test')}>Tiếp tục phiên kiểm tra</Button>}<Button onClick={exportSession}>Xuất kết quả tạm</Button><Button onClick={discardSession}>Xóa phiên nháp</Button></div>}
+        {session && <div className="app-notice"><span>Phiên đang dở: {session.worker.name} · {session.worker.companyName}</span><div className="app-notice-actions">{page !== 'new-test' && <Button size="sm" onClick={() => navigate('new-test')}>Tiếp tục phiên kiểm tra</Button>}<Button variant="ghost" size="sm" onClick={exportSession}>Xuất kết quả tạm</Button><Button variant="ghost" size="sm" onClick={discardSession}>Xóa phiên nháp</Button></div></div>}
         {renderPage()}
       </div>
     </div>

@@ -263,13 +263,21 @@
   .testSelectGrid { grid-template-columns: 1fr; }
 
   .testProgress {
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 8px;
+    margin-bottom: 10px;
+    padding: 0 8px;
     gap: 6px;
+    flex-wrap: nowrap;
   }
 
   .testStep {
-    padding: 8px 14px;
-    font-size: 13px;
+    flex: 1 1 0;
+    min-width: 0;
+    justify-content: center;
+    padding: 6px 8px;
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }

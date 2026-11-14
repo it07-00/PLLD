@@ -402,14 +402,26 @@
   }
 
   .testHeader {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .testTitle {
+    font-size: 18px;
   }
 
   .readyActions {
     width: 100%;
     flex-direction: column;
+    align-items: stretch;
+  }
+
+  .readyActions > button {
+    width: 100%;
+    justify-content: center;
   }
 
   .shapeGrid18 {

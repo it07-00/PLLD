@@ -64,7 +64,11 @@ body {
 #root {
   min-height: 100vh;
 }
-.app-notice { padding: 14px 18px; margin: 0 0 16px; border: 1px solid #dfc49d; background: #faf6ee; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; border-radius: 10px; font-size: 14px; }
+.app-notice { padding: 12px 16px; margin: 0 0 12px; border: 1px solid #dfc49d; background: #faf6ee; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; border-radius: 10px; font-size: 13px; }
+.app-notice-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+@media (max-width: 640px) {
+  .app-notice { padding: 8px 12px; margin: 0 0 8px; gap: 8px; border-radius: 0; border-left: none; border-right: none; }
+}
 .app-notice[role="alert"] { border-color: #fecaca; color: #a32d2d; }
 .file-action { display: block; margin-top: 18px; }
 .file-action input { display: block; margin-top: 8px; }
