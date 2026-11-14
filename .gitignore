@@ -1,1 +1,3 @@
 node_modules
+release/
+server-php/config.php
