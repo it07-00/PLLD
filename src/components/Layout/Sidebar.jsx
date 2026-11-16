@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from './Layout.module.css'
 import { LOGO_BASE64 } from '../../store/logo'
-import { LayoutDashboard, FlaskConical, ClipboardList, BarChart2, Settings } from 'lucide-react'
+import { LayoutDashboard, FlaskConical, ClipboardList, BarChart2, Settings, LogOut } from 'lucide-react'
 
 const NAV_ITEMS = [
   { key: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   { key: 'settings', label: 'Cài đặt', icon: <Settings size={20} /> },
 ]
 
-export default function Sidebar({ currentPage, onNavigate, isOpen, onClose }) {
+export default function Sidebar({ currentPage, onNavigate, isOpen, onClose, authUser, onLogout }) {
   return (
     <>
       {isOpen && <div className={styles.sidebarBackdrop} onClick={onClose} aria-hidden="true" />}
@@ -36,6 +36,17 @@ export default function Sidebar({ currentPage, onNavigate, isOpen, onClose }) {
           ))}
         </nav>
         <div className={styles.sidebarFooter}>
+          {authUser && (
+            <div className={styles.userBox}>
+              <div className={styles.userInfo}>
+                <div className={styles.userName}>{authUser.fullName || authUser.username}</div>
+                <div className={styles.userRole}>{authUser.role === 'admin' ? 'Quản trị viên' : 'Nhân viên'}</div>
+              </div>
+              <button type="button" className={styles.logoutBtn} onClick={onLogout} title="Đăng xuất">
+                <LogOut size={16} />
+              </button>
+            </div>
+          )}
           <div className={styles.copyright}>© 2026 Bảo Châu Environment</div>
         </div>
       </aside>

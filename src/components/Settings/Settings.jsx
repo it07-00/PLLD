@@ -1,18 +1,34 @@
-import React, { useMemo, useState, useRef } from 'react'
+import React, { useEffect, useMemo, useState, useRef } from 'react'
 import { Card, Button, Input, Select } from '../UI/UI'
 import { storage } from '../../store/storage'
-import { getSyncConfig, saveSyncConfig, testSyncConnection } from '../../store/sync'
+import {
+  getSyncConfig,
+  saveSyncConfig,
+  testSyncConnection,
+  changePassword,
+  fetchUsers,
+  createUser,
+  toggleUserActive,
+  resetUserPassword,
+} from '../../store/sync'
 import { normalizeCompanyName } from '../../utils/company.mjs'
 import { deleteCompanyAfterConfirmation } from '../../utils/actions.mjs'
-import { Download, Upload, TriangleAlert, CheckCircle2, Cloud, RefreshCw } from 'lucide-react'
+import { Download, Upload, TriangleAlert, CheckCircle2, Cloud, RefreshCw, ShieldCheck, LogOut, UserPlus } from 'lucide-react'
 import styles from './Settings.module.css'
 
-export default function Settings({ onExport, onImport, onClear, onDeleteCompany, onAssignCompany, records, syncState, onSyncNow, onSyncConfigChange }) {
+export default function Settings({ onExport, onImport, onClear, onDeleteCompany, onAssignCompany, records, authUser, onLogout, syncState, onSyncNow, onSyncConfigChange }) {
   const [settings, setSettings] = useState(() => storage.getSettings())
   const [syncForm, setSyncForm] = useState(() => getSyncConfig())
   const [syncMsg, setSyncMsg] = useState('')
   const [syncErr, setSyncErr] = useState('')
   const [testingSync, setTestingSync] = useState(false)
+  const [pwForm, setPwForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' })
+  const [pwMsg, setPwMsg] = useState('')
+  const [pwErr, setPwErr] = useState('')
+  const [users, setUsers] = useState([])
+  const [usersErr, setUsersErr] = useState('')
+  const [newUser, setNewUser] = useState({ username: '', fullName: '', password: '', role: 'staff' })
+  const [userMsg, setUserMsg] = useState('')
   const [saved, setSaved] = useState(false)
   const [importMsg, setImportMsg] = useState('')
   const [deleteCompany, setDeleteCompany] = useState('')
@@ -35,6 +51,76 @@ export default function Settings({ onExport, onImport, onClear, onDeleteCompany,
   }, [records])
   const selectedCompany = companies.find(company => company.key === deleteCompany)
   const fileRef = useRef(null)
+
+  const loadUsers = async () => {
+    if (authUser?.role !== 'admin') return
+    try {
+      const res = await fetchUsers()
+      setUsers(res.users || [])
+      setUsersErr('')
+    } catch (error) {
+      setUsersErr(error.message || 'Không tải được danh sách tài khoản.')
+    }
+  }
+
+  useEffect(() => {
+    if (authUser?.role === 'admin') loadUsers()
+  }, [authUser?.role])
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault()
+    setPwMsg('')
+    setPwErr('')
+    if (pwForm.newPassword.length < 6) {
+      setPwErr('Mật khẩu mới phải có ít nhất 6 ký tự.')
+      return
+    }
+    if (pwForm.newPassword !== pwForm.confirmPassword) {
+      setPwErr('Mật khẩu xác nhận không khớp.')
+      return
+    }
+    try {
+      await changePassword({ currentPassword: pwForm.currentPassword, newPassword: pwForm.newPassword })
+      setPwForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
+      setPwMsg('Đổi mật khẩu thành công!')
+    } catch (error) {
+      setPwErr(error.message || 'Không thể đổi mật khẩu.')
+    }
+  }
+
+  const handleCreateUser = async (e) => {
+    e.preventDefault()
+    setUserMsg('')
+    setUsersErr('')
+    try {
+      await createUser(newUser)
+      setNewUser({ username: '', fullName: '', password: '', role: 'staff' })
+      setUserMsg('Đã tạo tài khoản mới thành công.')
+      await loadUsers()
+    } catch (error) {
+      setUsersErr(error.message || 'Không tạo được tài khoản.')
+    }
+  }
+
+  const handleToggleUser = async (userId) => {
+    try {
+      await toggleUserActive(userId)
+      await loadUsers()
+    } catch (error) {
+      setUsersErr(error.message || 'Không cập nhật được trạng thái tài khoản.')
+    }
+  }
+
+  const handleResetUserPassword = async (user) => {
+    const nextPw = prompt(`Nhập mật khẩu mới cho tài khoản "${user.username}" (tối thiểu 6 ký tự):`)
+    if (!nextPw) return
+    try {
+      await resetUserPassword(user.id, nextPw)
+      setUserMsg(`Đã đặt lại mật khẩu cho "${user.username}".`)
+    } catch (error) {
+      setUsersErr(error.message || 'Không đặt lại được mật khẩu.')
+    }
+  }
 
   const update = (key, val) => {
     setSettings(s => ({ ...s, [key]: val }))
@@ -158,6 +244,127 @@ export default function Settings({ onExport, onImport, onClear, onDeleteCompany,
 
   return (
     <div className={styles.settings}>
+      {authUser && (
+        <Card>
+          <div className={styles.accountHeader}>
+            <div>
+              <h3 className={styles.sectionTitle} style={{ marginBottom: 4 }}>
+                <ShieldCheck size={18} style={{ verticalAlign: 'text-bottom', marginRight: 6 }} />
+                Tài khoản đang đăng nhập
+              </h3>
+              <p className={styles.sectionDesc} style={{ marginBottom: 0 }}>
+                <strong>{authUser.fullName || authUser.username}</strong> ({authUser.username}) ·{' '}
+                {authUser.role === 'admin' ? 'Quản trị viên' : 'Nhân viên'}
+              </p>
+            </div>
+            <Button variant="ghost" size="sm" onClick={onLogout}>
+              <LogOut size={14} />
+              Đăng xuất
+            </Button>
+          </div>
+
+          <form onSubmit={handleChangePassword} className={styles.formGrid}>
+            <Input
+              label="Mật khẩu hiện tại"
+              id="pw-current"
+              type="password"
+              value={pwForm.currentPassword}
+              onChange={e => setPwForm(f => ({ ...f, currentPassword: e.target.value }))}
+            />
+            <Input
+              label="Mật khẩu mới (tối thiểu 6 ký tự)"
+              id="pw-new"
+              type="password"
+              value={pwForm.newPassword}
+              onChange={e => setPwForm(f => ({ ...f, newPassword: e.target.value }))}
+            />
+            <Input
+              label="Nhập lại mật khẩu mới"
+              id="pw-confirm"
+              type="password"
+              value={pwForm.confirmPassword}
+              onChange={e => setPwForm(f => ({ ...f, confirmPassword: e.target.value }))}
+              className={styles.spanFull}
+            />
+            <div className={styles.spanFull}>
+              <Button type="submit" variant="primary" size="sm">Đổi mật khẩu</Button>
+            </div>
+          </form>
+          {pwMsg && <div className={styles.importMsg} style={{ marginTop: 10 }}>{pwMsg}</div>}
+          {pwErr && <div className={styles.syncErrorMsg} role="alert">{pwErr}</div>}
+
+          {authUser.role === 'admin' && (
+            <div style={{ marginTop: 22, paddingTop: 18, borderTop: '1px solid #e2e8f0' }}>
+              <h4 className={styles.sectionTitle} style={{ marginBottom: 8 }}>
+                <UserPlus size={16} style={{ verticalAlign: 'text-bottom', marginRight: 6 }} />
+                Quản lý tài khoản nhân viên
+              </h4>
+              <form onSubmit={handleCreateUser} className={styles.formGrid}>
+                <Input
+                  label="Tên đăng nhập"
+                  id="new-user-name"
+                  value={newUser.username}
+                  onChange={e => setNewUser(u => ({ ...u, username: e.target.value }))}
+                  placeholder="vd: nhanvien1"
+                />
+                <Input
+                  label="Họ và tên"
+                  id="new-user-fullname"
+                  value={newUser.fullName}
+                  onChange={e => setNewUser(u => ({ ...u, fullName: e.target.value }))}
+                  placeholder="Nguyễn Văn A"
+                />
+                <Input
+                  label="Mật khẩu"
+                  id="new-user-pw"
+                  type="password"
+                  value={newUser.password}
+                  onChange={e => setNewUser(u => ({ ...u, password: e.target.value }))}
+                  placeholder="Tối thiểu 6 ký tự"
+                />
+                <Select
+                  label="Vai trò"
+                  id="new-user-role"
+                  value={newUser.role}
+                  onChange={e => setNewUser(u => ({ ...u, role: e.target.value }))}
+                >
+                  <option value="staff">Nhân viên</option>
+                  <option value="admin">Quản trị viên (Admin)</option>
+                </Select>
+                <div className={styles.spanFull}>
+                  <Button type="submit" variant="primary" size="sm">Tạo tài khoản</Button>
+                </div>
+              </form>
+              {userMsg && <div className={styles.importMsg} style={{ marginTop: 10 }}>{userMsg}</div>}
+              {usersErr && <div className={styles.syncErrorMsg} role="alert">{usersErr}</div>}
+
+              {users.length > 0 && (
+                <div className={styles.userList}>
+                  {users.map(u => (
+                    <div key={u.id} className={styles.userRow}>
+                      <div>
+                        <strong>{u.fullName || u.username}</strong> ({u.username})
+                        <div className={styles.userRowMeta}>
+                          {u.role === 'admin' ? 'Quản trị viên' : 'Nhân viên'} · {u.isActive ? 'Đang hoạt động' : 'Đã khóa'}
+                        </div>
+                      </div>
+                      <div className={styles.userRowActions}>
+                        <Button variant="ghost" size="sm" onClick={() => handleResetUserPassword(u)}>Đặt lại MK</Button>
+                        {u.id !== authUser.id && (
+                          <Button variant="ghost" size="sm" onClick={() => handleToggleUser(u.id)}>
+                            {u.isActive ? 'Khóa' : 'Mở khóa'}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </Card>
+      )}
+
       <Card>
         <h3 className={styles.sectionTitle}>
           <Cloud size={18} style={{ verticalAlign: 'text-bottom', marginRight: 6 }} />

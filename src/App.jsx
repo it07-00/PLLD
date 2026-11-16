@@ -8,9 +8,11 @@ import Summary from './components/NewTest/Summary'
 import History from './components/History/History'
 import Stats from './components/Stats/Stats'
 import Settings from './components/Settings/Settings'
+import Login from './components/Auth/Login'
 import { useRecords } from './hooks/useRecords'
 import { Button, Card } from './components/UI/UI'
 import { storage, downloadJSON } from './store/storage'
+import { getAuthSession, clearAuthSession } from './store/sync'
 import { normalizeRecord } from './utils/records.mjs'
 import { newId } from './utils/session.mjs'
 import { vietnamDateTime } from './utils/datetime.mjs'
@@ -23,6 +25,7 @@ function loadSession() {
 }
 
 export default function App() {
+  const [authSession, setAuthSession] = useState(() => getAuthSession())
   const [page, setPage] = useState('dashboard')
   const [initialDraft] = useState(loadSession)
   const [session, setSession] = useState(initialDraft.session)
@@ -151,8 +154,26 @@ export default function App() {
     }
     if (page === 'history') return <History records={records} selectedId={selectedRecordId} onDelete={id => safe(() => deleteRecord(id))} onNavigate={navigate} />
     if (page === 'stats') return <Stats records={records} />
-    if (page === 'settings') return <Settings records={records} syncState={syncState} onSyncNow={triggerSync} onSyncConfigChange={refreshSyncBadge} onExport={() => safe(exportData)} onImport={importBackup} onClear={clearAll} onDeleteCompany={deleteCompany} onAssignCompany={(ids, name) => { const count = storage.assignCompany(ids, name); refresh(); if (count) scheduleAutoSync(); return count }} />
+    if (page === 'settings') return <Settings records={records} authUser={authSession?.user} onLogout={handleLogout} syncState={syncState} onSyncNow={triggerSync} onSyncConfigChange={refreshSyncBadge} onExport={() => safe(exportData)} onImport={importBackup} onClear={clearAll} onDeleteCompany={deleteCompany} onAssignCompany={(ids, name) => { const count = storage.assignCompany(ids, name); refresh(); if (count) scheduleAutoSync(); return count }} />
     return <Dashboard records={records} onNavigate={navigate} />
+  }
+
+  const handleLoginSuccess = (nextSession) => {
+    setAuthSession(nextSession)
+    refreshSyncBadge()
+    triggerSync()
+  }
+
+  const handleLogout = () => {
+    if (sessionRef.current && !confirm('Phiên kiểm tra chưa hoàn tất. Bạn vẫn muốn đăng xuất?')) return
+    clearAuthSession()
+    setAuthSession(null)
+    setPage('dashboard')
+    refreshSyncBadge()
+  }
+
+  if (!authSession) {
+    return <Login onSuccess={handleLoginSuccess} />
   }
 
   const syncLabel = syncState.status === 'syncing'
@@ -178,7 +199,7 @@ export default function App() {
   )
 
   return <>
-    {!isImmersiveMode && <Sidebar currentPage={page} onNavigate={navigate} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />}
+    {!isImmersiveMode && <Sidebar currentPage={page} onNavigate={navigate} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} authUser={authSession.user} onLogout={handleLogout} />}
     <div className={`${layoutStyles.mainArea} ${!isSidebarOpen ? layoutStyles.mainExpanded : ''} ${isImmersiveMode ? layoutStyles.mainImmersive : ''}`}>
       {!isImmersiveMode && <Topbar currentPage={page} onToggleSidebar={() => setIsSidebarOpen(value => !value)} actions={<>{syncButton}{page === 'dashboard' ? <Button onClick={() => navigate('new-test')}>+ Kiểm tra mới</Button> : page === 'history' ? <Button onClick={() => safe(exportData)}>Xuất JSON</Button> : null}</>} />}
       <div className={isImmersiveMode ? layoutStyles.contentImmersive : layoutStyles.content}>
