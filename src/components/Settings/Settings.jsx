@@ -28,8 +28,34 @@ import {
   KeyRound,
   ChevronDown,
   ChevronUp,
+  Eye,
+  EyeOff,
 } from 'lucide-react'
 import styles from './Settings.module.css'
+
+function PasswordInput({ label, id, value, onChange, placeholder, className = '' }) {
+  const [visible, setVisible] = useState(false)
+  return (
+    <div className={`${styles.passwordWrap} ${className}`}>
+      <Input
+        label={label}
+        id={id}
+        type={visible ? 'text' : 'password'}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+      />
+      <button
+        type="button"
+        className={styles.togglePw}
+        onClick={() => setVisible(v => !v)}
+        aria-label={visible ? `Ẩn ${label}` : `Hiện ${label}`}
+      >
+        {visible ? <EyeOff size={16} /> : <Eye size={16} />}
+      </button>
+    </div>
+  )
+}
 
 const TABS = [
   { key: 'account', label: 'Tài khoản', icon: ShieldCheck },
@@ -362,24 +388,21 @@ export default function Settings({
             <p className={styles.sectionDesc}>Cập nhật mật khẩu định kỳ để bảo vệ dữ liệu kiểm tra.</p>
             <form onSubmit={handleChangePassword}>
               <div className={styles.formGrid3}>
-                <Input
+                <PasswordInput
                   label="Mật khẩu hiện tại"
                   id="pw-current"
-                  type="password"
                   value={pwForm.currentPassword}
                   onChange={e => setPwForm(f => ({ ...f, currentPassword: e.target.value }))}
                 />
-                <Input
+                <PasswordInput
                   label="Mật khẩu mới (tối thiểu 6 ký tự)"
                   id="pw-new"
-                  type="password"
                   value={pwForm.newPassword}
                   onChange={e => setPwForm(f => ({ ...f, newPassword: e.target.value }))}
                 />
-                <Input
+                <PasswordInput
                   label="Nhập lại mật khẩu mới"
                   id="pw-confirm"
-                  type="password"
                   value={pwForm.confirmPassword}
                   onChange={e => setPwForm(f => ({ ...f, confirmPassword: e.target.value }))}
                 />
@@ -415,10 +438,9 @@ export default function Settings({
                     onChange={e => setNewUser(u => ({ ...u, fullName: e.target.value }))}
                     placeholder="Nguyễn Văn A"
                   />
-                  <Input
+                  <PasswordInput
                     label="Mật khẩu"
                     id="new-user-pw"
-                    type="password"
                     value={newUser.password}
                     onChange={e => setNewUser(u => ({ ...u, password: e.target.value }))}
                     placeholder="Tối thiểu 6 ký tự"
@@ -539,10 +561,9 @@ export default function Settings({
                     placeholder="https://25percent.tech/api/index.php"
                     className={styles.spanFull}
                   />
-                  <Input
+                  <PasswordInput
                     label="Mã bảo mật dự phòng (API Key - tùy chọn)"
                     id="sync-api-key"
-                    type="password"
                     value={syncForm.apiKey || ''}
                     onChange={e => { setSyncForm(s => ({ ...s, apiKey: e.target.value })); setSyncMsg(''); setSyncErr('') }}
                     placeholder="Không bắt buộc nếu đã đăng nhập bằng tài khoản"
