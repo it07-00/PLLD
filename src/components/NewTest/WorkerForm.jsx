@@ -120,26 +120,28 @@ export default function WorkerForm({ onSubmit, records = [] }) {
         {autofillMsg && <div className={`${styles.autofillMsg} ${autofillMsg.startsWith('✅') ? styles.msgSuccess : ''}`} role="status">{autofillMsg}</div>}
 
         <div className={styles.formGrid}>
-          <Input label="Chức danh" id="worker-position" value={form.position} onChange={e => update('position', e.target.value)} placeholder="Công nhân, Kỹ thuật viên..." />
-          <Input label="Đơn vị / Phân xưởng" id="worker-unit" value={form.unit} onChange={e => update('unit', e.target.value)} placeholder="Phân xưởng A" />
-          <Select label="Thời điểm" id="worker-timeline" value={form.timeline} onChange={e => update('timeline', e.target.value)}>
-            <option value="Đầu ca">Đầu ca</option>
-            <option value="Giữa ca">Giữa ca</option>
-            <option value="Cuối ca">Cuối ca</option>
-          </Select>
-          <Input label="Tuổi" id="worker-age" type="number" min="16" max="80" value={form.age} onChange={e => update('age', e.target.value)} placeholder="32" />
-          <Select label="Giới tính" id="worker-gender" value={form.gender} onChange={e => update('gender', e.target.value)}>
-            <option value="male">Nam</option>
-            <option value="female">Nữ</option>
-          </Select>
-          <Input label="Thâm niên (năm)" id="worker-seniority" type="number" min="0" value={form.seniority} onChange={e => update('seniority', e.target.value)} placeholder="0" />
-          <Select label="Trình độ văn hoá" id="worker-education" value={form.education} onChange={e => update('education', e.target.value)}>
-            <option value="Cấp 2">Cấp 2</option>
-            <option value="Cấp 3">Cấp 3</option>
-            <option value="Trung cấp/Cao đẳng">Trung cấp/Cao đẳng</option>
-            <option value="Đại học">Đại học</option>
-            <option value="Khác">Khác</option>
-          </Select>
+          <Input label="Chức danh" id="worker-position" value={form.position} onChange={e => update('position', e.target.value)} placeholder="Công nhân, Kỹ thuật viên..." className={styles.fieldWide} />
+          <Input label="Đơn vị / Phân xưởng" id="worker-unit" value={form.unit} onChange={e => update('unit', e.target.value)} placeholder="Phân xưởng A" className={styles.fieldWide} />
+          <div className={styles.compactRow}>
+            <Select label="Thời điểm" id="worker-timeline" value={form.timeline} onChange={e => update('timeline', e.target.value)}>
+              <option value="Đầu ca">Đầu ca</option>
+              <option value="Giữa ca">Giữa ca</option>
+              <option value="Cuối ca">Cuối ca</option>
+            </Select>
+            <Input label="Tuổi" id="worker-age" type="number" min="16" max="80" value={form.age} onChange={e => update('age', e.target.value)} placeholder="32" />
+            <Select label="Giới tính" id="worker-gender" value={form.gender} onChange={e => update('gender', e.target.value)}>
+              <option value="male">Nam</option>
+              <option value="female">Nữ</option>
+            </Select>
+            <Input label="Thâm niên (năm)" id="worker-seniority" type="number" min="0" value={form.seniority} onChange={e => update('seniority', e.target.value)} placeholder="0" />
+            <Select label="Trình độ văn hoá" id="worker-education" value={form.education} onChange={e => update('education', e.target.value)}>
+              <option value="Cấp 2">Cấp 2</option>
+              <option value="Cấp 3">Cấp 3</option>
+              <option value="Trung cấp/Cao đẳng">Trung cấp/Cao đẳng</option>
+              <option value="Đại học">Đại học</option>
+              <option value="Khác">Khác</option>
+            </Select>
+          </div>
         </div>
 
         <div className={styles.testSelectSection}>

@@ -10,7 +10,7 @@
 
 .identityGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) 150px;
   gap: 14px;
 }
 
@@ -32,6 +32,13 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
+}
+.fieldWide { min-width: 0; }
+.compactRow {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1.4fr 0.9fr 0.9fr 1.2fr 1.8fr;
+  gap: 12px;
 }
 .spanFull { grid-column: 1 / -1; }
 .formActions {
@@ -256,9 +263,17 @@
   margin-top: 6px;
 }
 
+@media (max-width: 960px) {
+  .compactRow {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .identityGrid { grid-template-columns: 1fr; }
   .formGrid { grid-template-columns: 1fr; }
+  .compactRow { grid-template-columns: 1fr 1fr; }
+  .compactRow > :last-child { grid-column: 1 / -1; }
   .resultCards, .chartRow { grid-template-columns: 1fr; }
   .testSelectGrid { grid-template-columns: 1fr; }
 
