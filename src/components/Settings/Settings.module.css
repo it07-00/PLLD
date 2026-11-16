@@ -1,22 +1,151 @@
-.settings { display: flex; flex-direction: column; gap: 18px; }
-.legacySelect select { height: 180px; width: 100%; }
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ── Tab Navigation ── */
+.tabBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  overflow-x: auto;
+}
+
+.tabBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.tabBtn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.tabActive {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(5, 150, 105, 0.24);
+}
+
+.tabPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ── Section Header ── */
+.sectionHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
 
 .sectionTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 15px;
-  font-weight: 600;
-  color: #006241;
+  font-weight: 700;
+  color: #0f172a;
   margin-bottom: 4px;
   letter-spacing: -0.01em;
 }
 
-.sectionDesc {
-  font-size: 13px;
-  color: rgba(0,0,0,0.58);
-  margin-bottom: 16px;
-  line-height: 1.5;
-  letter-spacing: -0.01em;
+.sectionTitle svg {
+  color: #059669;
+  flex-shrink: 0;
 }
 
+.sectionDesc {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.sectionHead .sectionDesc {
+  margin-bottom: 0;
+}
+
+/* ── Profile Card ── */
+.profileRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.profileLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profileName {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.profileMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.roleBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+/* ── Forms ── */
 .formGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -24,245 +153,32 @@
   margin-bottom: 16px;
 }
 
-.spanFull { grid-column: 1 / -1; }
-
-.label {
-  display: block;
-  font-size: 13px;
-  font-weight: 500;
-  color: rgba(0,0,0,0.58);
-  margin-bottom: 6px;
-  letter-spacing: -0.01em;
-}
-
-.logoSection { margin-bottom: 16px; }
-.logoRow {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 14px 16px;
-  border: 1px solid #edebe9;
-  border-radius: 12px;
-  background: #f9f8f5;
-}
-.logoPreview {
-  position: relative;
-  width: 88px;
-  height: 88px;
-  border: 1px solid #d6dbde;
-  border-radius: 12px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ffffff;
-}
-.logoPreview img { max-width: 100%; max-height: 100%; object-fit: contain; }
-.removeLogo {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 18px;
-  height: 18px;
-  border: none;
-  background: #c82014;
-  color: #fff;
-  border-radius: 50%;
-  font-size: 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.logoPlaceholder {
-  width: 88px;
-  height: 88px;
-  border: 1px dashed #d6dbde;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  background: #ffffff;
-  text-align: center;
-  padding: 8px;
-}
-
-.logoPlaceholderTitle {
-  font-size: 11px;
-  font-weight: 600;
-  color: rgba(0,0,0,0.58);
-}
-
-.logoPlaceholderHint {
-  font-size: 10px;
-  color: rgba(0,0,0,0.38);
-}
-
-.logoActions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.logoHelp {
-  font-size: 12px;
-  color: rgba(0,0,0,0.5);
-  line-height: 1.4;
-}
-
-.saveRow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.savedMsg {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: #006241;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-
-/* Backup */
-.backupActions { display: flex; flex-direction: column; gap: 12px; }
-.backupItem {
-  display: flex;
-  align-items: center;
+.formGrid3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
-  padding: 12px 16px;
-  background: #f2f0eb;
-  border-radius: 12px;
-  border: 1px solid #edebe9;
-}
-.backupIcon {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  background: #d4e9e2;
-  color: #006241;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.backupTitle { font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.87); letter-spacing: -0.01em; }
-.backupDesc { font-size: 12px; color: rgba(0,0,0,0.58); margin-top: 2px; }
-.backupItem > button, .backupItem > label { margin-left: auto; flex-shrink: 0; }
-
-.uploadBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 30px;
-  padding: 0 12px;
-  background: transparent;
-  color: #185FA5;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
-  transition: background 0.2s;
-}
-.uploadBtn:hover { background: #f5f6fa; }
-
-.importMsg {
-  font-size: 13px;
-  padding: 8px 12px;
-  background: #f0fdf4;
-  border-radius: 6px;
-  color: #166534;
-}
-
-.dangerCard { border-color: #fecaca !important; }
-
-.companyDelete {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-  margin: 16px 0;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #fecaca;
-}
-.companyDelete > :global(div) { width: 100%; max-width: 520px; }
-.companyDelete .sectionDesc { margin-bottom: 0; }
-.companyDeleteCount { margin: 0; font-size: 13px; line-height: 1.5; }
-
-.dangerTitle {
-  color: #A32D2D;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.syncActions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.syncCheck {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: rgba(0, 0, 0, 0.78);
-  margin-top: 12px;
-  cursor: pointer;
-}
-
-.syncMeta {
-  margin-top: 10px;
-  font-size: 12px;
-  color: rgba(0, 0, 0, 0.58);
-}
-
-.syncErrorMsg {
-  margin-top: 10px;
-  font-size: 13px;
-  padding: 8px 12px;
-  background: #fef2f2;
-  border-radius: 6px;
-  color: #991b1b;
-}
-
-@media (max-width: 768px) {
-  .formGrid { grid-template-columns: 1fr; }
-  .logoRow {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 640px) {
-  .backupItem { flex-wrap: wrap; gap: 10px; }
-  .backupItem > button, .backupItem > label { margin-left: 0; }
-  .syncActions > button { flex: 1 1 auto; }
-}
-
-.accountHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
   margin-bottom: 16px;
 }
 
+.spanFull {
+  grid-column: 1 / -1;
+}
+
+.formActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ── Users List ── */
 .userList {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 14px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
 }
 
 .userRow {
@@ -277,13 +193,391 @@
   background: #f8fafc;
 }
 
+.userRowTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: #0f172a;
+}
+
 .userRowMeta {
   font-size: 12px;
   color: #64748b;
+  margin-top: 2px;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.statusActive {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.statusLocked {
+  background: #fef2f2;
+  color: #b91c1c;
 }
 
 .userRowActions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+/* ── Sync ── */
+.syncStatusBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 14px;
+}
+
+.syncStatusTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.syncMeta {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.syncActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkboxLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #334155;
+  cursor: pointer;
+  margin-bottom: 14px;
+}
+
+.advancedBtn {
+  background: none;
+  border: none;
+  color: #059669;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.advancedBtn:hover {
+  text-decoration: underline;
+}
+
+.advancedBox {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed #cbd5e1;
+}
+
+/* ── Logo & General ── */
+.label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.logoSection {
+  margin-bottom: 16px;
+}
+
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.logoPreview {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.logoPreview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.removeLogo {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: #dc2626;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoPlaceholder {
+  width: 88px;
+  height: 88px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: #ffffff;
+  text-align: center;
+  padding: 8px;
+  flex-shrink: 0;
+}
+
+.logoPlaceholderTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.logoPlaceholderHint {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.logoActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.logoHelp {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.savedMsg {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #047857;
+}
+
+/* ── Backup & Data ── */
+.backupActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.backupItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.backupIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #ecfdf5;
+  color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.backupTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.backupDesc {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.backupItem > button,
+.backupItem > label {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.uploadBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  padding: 0 14px;
+  background: #ffffff;
+  color: #059669;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.uploadBtn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.legacySelect select {
+  height: 180px;
+  width: 100%;
+}
+
+/* ── Alerts ── */
+.msgSuccess {
+  margin-top: 12px;
+  font-size: 13px;
+  padding: 10px 12px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 10px;
+  color: #065f46;
+}
+
+.msgError {
+  margin-top: 12px;
+  font-size: 13px;
+  padding: 10px 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  color: #b91c1c;
+}
+
+/* ── Danger Zone ── */
+.dangerCard {
+  border-color: #fecaca !important;
+}
+
+.dangerTitle {
+  color: #b91c1c;
+}
+
+.dangerTitle svg {
+  color: #dc2626;
+}
+
+.dangerBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid #fee2e2;
+}
+
+.dangerBlock:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.dangerBlock > :global(div) {
+  width: 100%;
+  max-width: 480px;
+}
+
+.dangerBlock .sectionDesc {
+  margin-bottom: 0;
+}
+
+.dangerSubTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.companyDeleteCount {
+  margin: 0;
+  font-size: 13px;
+  color: #334155;
+}
+
+@media (max-width: 900px) {
+  .formGrid3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+  .logoRow {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .backupItem {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .backupItem > button,
+  .backupItem > label {
+    margin-left: 0;
+  }
+  .syncActions > button {
+    flex: 1 1 auto;
+  }
 }
