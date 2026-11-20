@@ -74,6 +74,7 @@
   font-weight: 600;
   border: 1px solid;
   letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 /* ── MetricCard ── */

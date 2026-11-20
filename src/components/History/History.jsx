@@ -103,9 +103,9 @@ export default function History({ records, onDelete, onUpdate, selectedId, onNav
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>STT người lao động</th>
+                  <th>STT</th>
                   <th>Họ tên</th>
-                  <th>Tên công ty</th>
+                  <th>Công ty</th>
                   <th>Đơn vị</th>
                   <th>Ngày</th>
                   <th>Thời điểm</th>
