@@ -94,18 +94,18 @@ export default function WorkerForm({ onSubmit, records = [] }) {
       <h2 className={styles.formTitle}>Thông tin người lao động</h2>
       <p className={styles.formDesc}>Nhập đầy đủ thông tin trước khi bắt đầu kiểm tra</p>
       <form onSubmit={handleSubmit} className={styles.form}>
-        <Input
-          label="Tên công ty *"
-          id="worker-company"
-          value={form.companyName}
-          onChange={e => update('companyName', e.target.value)}
-          onBlur={handleAutoFill}
-          placeholder="Nhập tên công ty"
-          list="worker-companies"
-          error={errors.companyName}
-        />
-        <datalist id="worker-companies">{companies.map(company => <option key={company.key} value={company.name} />)}</datalist>
         <div className={styles.identityGrid}>
+          <Input
+            label="Tên công ty *"
+            id="worker-company"
+            value={form.companyName}
+            onChange={e => update('companyName', e.target.value)}
+            onBlur={handleAutoFill}
+            placeholder="Nhập tên công ty"
+            list="worker-companies"
+            error={errors.companyName}
+            className={styles.identityField}
+          />
           <Input
             label="Họ và tên *"
             id="worker-name"
@@ -126,6 +126,7 @@ export default function WorkerForm({ onSubmit, records = [] }) {
             className={styles.identityField}
           />
         </div>
+        <datalist id="worker-companies">{companies.map(company => <option key={company.key} value={company.name} />)}</datalist>
 
         {autofillMsg && <div className={`${styles.autofillMsg} ${autofillMsg.startsWith('✅') ? styles.msgSuccess : ''}`} role="status">{autofillMsg}</div>}
 

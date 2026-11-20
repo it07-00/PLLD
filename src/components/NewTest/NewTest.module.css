@@ -10,7 +10,7 @@
 
 .identityGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 150px;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.3fr) 140px;
   gap: 14px;
 }
 
@@ -264,6 +264,12 @@
 }
 
 @media (max-width: 960px) {
+  .identityGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .identityGrid > :first-child {
+    grid-column: 1 / -1;
+  }
   .compactRow {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
