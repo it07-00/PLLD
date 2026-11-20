@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { findWorkerRecord } from './workerLookup.mjs'
+import { findWorkerRecord, nextWorkerCode } from './workerLookup.mjs'
 
 const record = (id, companyName, name = 'Nguyễn Văn A', code = '01') => ({
   id, worker: { companyName, name, code },
@@ -43,4 +43,17 @@ test('normalizes spacing, case and Unicode and selects the latest record', () =>
   const newer = record(2, 'Công ty A')
   assert.equal(findWorkerRecord([older, newer], { code: ' 01 ', name: ' NGUYỄN VĂN A ' },
     ' CÔNG  TY A '.normalize('NFD')), newer)
+})
+
+test('nextWorkerCode increments max numeric STT per company', () => {
+  const list = [
+    record(1, 'Công ty A', 'An', '01'),
+    record(2, 'Công ty A', 'Bình', '09'),
+    record(3, 'Công ty A', 'Cường', 'NV-12'),
+    record(4, 'Công ty B', 'Dũng', '25'),
+  ]
+  assert.equal(nextWorkerCode(list, ' công ty   a '), '10')
+  assert.equal(nextWorkerCode(list, 'Công ty B'), '26')
+  assert.equal(nextWorkerCode(list, 'Công ty Mới'), '01')
+  assert.equal(nextWorkerCode(list, ''), '')
 })

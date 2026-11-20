@@ -30,3 +30,17 @@ export function autofillWorker(form, worker, edited = new Set()) {
   next.timeline = 'Cuối ca'
   return next
 }
+
+export function nextWorkerCode(records, companyName) {
+  const company = normalize(companyName)
+  if (!company) return ''
+  let max = 0
+  for (const record of records) {
+    if (normalize(record?.worker?.companyName) !== company) continue
+    const code = String(record?.worker?.code ?? '').trim()
+    if (!/^\d+$/.test(code)) continue
+    const num = Number.parseInt(code, 10)
+    if (num > max) max = num
+  }
+  return String(max + 1).padStart(2, '0')
+}

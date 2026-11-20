@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { Input, Select, Button, Card } from '../UI/UI'
 import { storage } from '../../store/storage'
-import { findWorkerRecord, autofillWorker } from '../../utils/workerLookup.mjs'
+import { findWorkerRecord, autofillWorker, nextWorkerCode } from '../../utils/workerLookup.mjs'
 import { companyOptions } from '../../utils/company.mjs'
 import { normalizeText } from '../../utils/records.mjs'
 import { Volume2, Eye, Brain } from 'lucide-react'
@@ -76,8 +76,18 @@ export default function WorkerForm({ onSubmit, records = [] }) {
     const hasAnyTest = Object.values(selectedTests).some(v => v)
     if (!hasAnyTest) errs.tests = 'Vui lòng chọn ít nhất 1 bài test'
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
-    onSubmit({ ...form, companyName: form.companyName.trim(), selectedTests })
+
+    const companyName = form.companyName.trim()
+    let finalCode = form.code.trim()
+    if (!finalCode) {
+      const existing = findWorkerRecord(records, form, companyName)
+      finalCode = existing?.worker?.code?.trim() || nextWorkerCode(records, companyName)
+    }
+
+    onSubmit({ ...form, companyName, code: finalCode, selectedTests })
   }
+
+  const suggestedCode = nextWorkerCode(records, form.companyName)
 
   return (
     <Card className={styles.formCard}>
@@ -112,7 +122,7 @@ export default function WorkerForm({ onSubmit, records = [] }) {
             value={form.code}
             onChange={e => update('code', e.target.value)}
             onBlur={handleAutoFill}
-            placeholder="VD: 02"
+            placeholder={suggestedCode ? `Tự động: ${suggestedCode}` : 'VD: 01'}
             className={styles.identityField}
           />
         </div>
