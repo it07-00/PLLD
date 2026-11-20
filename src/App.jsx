@@ -152,7 +152,7 @@ export default function App() {
       if (session) return <TestRunner key={session.id} selectedTests={session.worker.selectedTests} initialResults={session.results} initialProgress={session.progress} onComplete={complete} onProgress={(results, progress) => { const current = sessionRef.current; if (current) persistSession({ ...current, results, progress }) }} />
       return <WorkerForm records={records} onSubmit={start} />
     }
-    if (page === 'history') return <History records={records} selectedId={selectedRecordId} onDelete={id => safe(() => deleteRecord(id))} onNavigate={navigate} />
+    if (page === 'history') return <History records={records} selectedId={selectedRecordId} onDelete={id => safe(() => deleteRecord(id))} onUpdate={record => safe(() => saveRecord(record))} onNavigate={navigate} />
     if (page === 'stats') return <Stats records={records} />
     if (page === 'settings') return <Settings records={records} authUser={authSession?.user} onLogout={handleLogout} syncState={syncState} onSyncNow={triggerSync} onSyncConfigChange={refreshSyncBadge} onExport={() => safe(exportData)} onImport={importBackup} onClear={clearAll} onDeleteCompany={deleteCompany} onAssignCompany={(ids, name) => { const count = storage.assignCompany(ids, name); refresh(); if (count) scheduleAutoSync(); return count }} />
     return <Dashboard records={records} onNavigate={navigate} />

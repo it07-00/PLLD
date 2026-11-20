@@ -9,7 +9,7 @@ import { normalizeText } from '../../utils/records.mjs'
 
 const PAGE_SIZE = 20
 
-export default function History({ records, onDelete, selectedId, onNavigate }) {
+export default function History({ records, onDelete, onUpdate, selectedId, onNavigate }) {
   const [search, setSearch] = useState('')
   const [filterUnit, setFilterUnit] = useState('')
   const [filterCompany, setFilterCompany] = useState('')
@@ -48,7 +48,7 @@ export default function History({ records, onDelete, selectedId, onNavigate }) {
   if (viewingId) {
     const record = records.find(r => r.id === viewingId)
     if (record) {
-      return <RecordDetail record={record} onBack={() => setViewingId(null)} onDelete={onDelete} />
+      return <RecordDetail record={record} onBack={() => setViewingId(null)} onDelete={onDelete} onUpdate={onUpdate} />
     }
   }
 
